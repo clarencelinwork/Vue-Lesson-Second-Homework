@@ -4,6 +4,9 @@ import SideComponent from '@/components/Side.vue'
 import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
 
+function showTest() {
+  console.log('test')
+}
 </script>
 
 <template>
@@ -15,13 +18,13 @@ import PasswordInput from '@/components/PasswordInput.vue'
         <form class="formControls" action="index.html">
           <h2 class="formControls_txt">最實用的線上代辦事項服務</h2>
           <EmailInput />
-          <PasswordInput label-name="密碼" placeholder="請輸入密碼"/>
-          <input
-            class="formControls_btnSubmit"
-            type="button"
-            onclick="javascript:location.href='#todoListPage'"
-            value="登入"
+          <PasswordInput
+            input-name="password"
+            input-id="password"
+            label-name="密碼"
+            placeholder="請輸入密碼"
           />
+          <input class="formControls_btnSubmit" type="button" v-on:click="showTest" value="登入" />
           <RouterLink class="formControls_btnLink" to="/sign-up">註冊帳號</RouterLink>
         </form>
       </div>
@@ -29,6 +32,4 @@ import PasswordInput from '@/components/PasswordInput.vue'
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
