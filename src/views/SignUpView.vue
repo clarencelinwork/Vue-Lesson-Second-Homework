@@ -24,7 +24,7 @@ import NicknameInput from '@/components/NicknameInput.vue'
             onclick="javascript:location.href='#todoListPage'"
             value="註冊帳號"
           />
-          <RouterLink class="formControls_btnLink" to="/sign-in">登入</RouterLink>
+          <RouterLink class="formControls_btnLink" to="/">登入</RouterLink>
         </form>
       </div>
     </div>
