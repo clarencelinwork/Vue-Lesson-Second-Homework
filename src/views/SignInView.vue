@@ -4,7 +4,7 @@ import SideComponent from '@/components/Side.vue'
 import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
 
-import { ref } from 'vue'
+import { ref,onMounted  } from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
@@ -12,8 +12,9 @@ const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 
+const site = 'https://todolist-api.hexschool.io'
+
 function submitForm() {
-  const site = 'https://todolist-api.hexschool.io'
 
   const requestUrl = `${site}/users/sign_in`
   axios
@@ -37,6 +38,35 @@ function submitForm() {
       }
     })
 }
+
+onMounted(() => {
+  const token = Cookies.get('token')
+
+  if (token !== "undefined"){
+      const requestUrl = `${site}/users/checkout`
+
+      axios
+        .get(requestUrl, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response)
+          errorMessage.value = "登入中"
+        })
+        .catch((error) => {
+          console.log(error)
+          if (Array.isArray(error.response.data.message)) {
+            // 如果是陣列，取得第一個元素
+            errorMessage.value = error.response.data.message[0]
+          } else {
+            // 如果不是陣列（例如是字串），就直接使用
+            errorMessage.value = error.response.data.message
+          }
+        })
+  }
+});
 
 function getEmailInput(value) {
   email.value = value
