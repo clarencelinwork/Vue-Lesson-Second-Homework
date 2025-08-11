@@ -11,6 +11,7 @@ import Cookies from 'js-cookie'
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
+const isLogin = ref(false)
 
 const site = 'https://todolist-api.hexschool.io'
 
@@ -28,7 +29,35 @@ function submitForm() {
       errorMessage.value = "登入成功"
     })
     .catch((error) => {
-      console.log(error)
+      if (Array.isArray(error.response.data.message)) {
+        // 如果是陣列，取得第一個元素
+        errorMessage.value = error.response.data.message[0]
+      } else {
+        // 如果不是陣列（例如是字串），就直接使用
+        errorMessage.value = error.response.data.message
+      }
+    })
+}
+
+function signOutButton(){
+  const token = Cookies.get('token')
+  const requestUrl = `${site}/users/sign_out`
+  axios
+    .post(requestUrl, 
+    {},
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+      )
+    .then((response) => {
+      Cookies.remove('token')
+      Cookies.remove('tokenExpired')
+      errorMessage.value = "登出成功"
+      isLogin.value = false
+    })
+    .catch((error) => {
       if (Array.isArray(error.response.data.message)) {
         // 如果是陣列，取得第一個元素
         errorMessage.value = error.response.data.message[0]
@@ -41,8 +70,7 @@ function submitForm() {
 
 onMounted(() => {
   const token = Cookies.get('token')
-
-  if (token !== "undefined"){
+  if (token !== undefined){
       const requestUrl = `${site}/users/checkout`
 
       axios
@@ -52,11 +80,11 @@ onMounted(() => {
           },
         })
         .then((response) => {
-          console.log(response)
+          isLogin.value = true
           errorMessage.value = "登入中"
         })
         .catch((error) => {
-          console.log(error)
+          isLogin.value = false
           if (Array.isArray(error.response.data.message)) {
             // 如果是陣列，取得第一個元素
             errorMessage.value = error.response.data.message[0]
@@ -89,7 +117,8 @@ function getPasswordInput(value) {
           <EmailInput @update:value="getEmailInput" />
           <PasswordInput input-name="password" input-id="password" label-name="密碼" placeholder="請輸入密碼" @update:value="getPasswordInput"/>
           <div id="errorMessage">{{ errorMessage }}</div>
-          <button class="formControls_btnSubmit" type="button" v-on:click="submitForm">登入</button>
+          <button class="formControls_btnSubmit" type="button" v-on:click="signOutButton" v-if="isLogin">登出</button>
+          <button class="formControls_btnSubmit" type="button" v-on:click="submitForm" v-else>登入</button>
           <RouterLink class="formControls_btnLink" to="/sign-up">註冊帳號</RouterLink>
         </form>
       </div>
