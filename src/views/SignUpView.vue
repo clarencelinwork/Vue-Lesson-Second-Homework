@@ -27,7 +27,11 @@ function submitForm() {
     })
     .then((response) => {
       Cookies.set('UID', response.data.uid, { expires: 7 })
-      errorMessage.value=UID.value
+      errorMessage.value = "註冊成功"
+      email.value = ""
+      nickname.value = ""
+      emapasswordil.value = ""
+      repeatPassword.value = ""
     })
     .catch((error) => {
       console.log(error)
