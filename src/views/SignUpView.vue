@@ -30,7 +30,7 @@ function submitForm() {
       errorMessage.value = "註冊成功"
       email.value = ""
       nickname.value = ""
-      emapasswordil.value = ""
+      password.value = ""
       repeatPassword.value = ""
     })
     .catch((error) => {
