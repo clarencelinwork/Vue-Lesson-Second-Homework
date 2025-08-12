@@ -43,10 +43,10 @@ const todoListFinishCount = ref(0)
 const todoListUnFinishCount = ref(0)
 
 onMounted(() => {
-  checkCount()
+  updateCount()
 })
 
-function checkCount() {
+function updateCount() {
   todoListCount.value = todoListData.value.length
   todoListFinishCount.value = todoListData.value.filter((item) => item.status === true).length
   todoListUnFinishCount.value = todoListData.value.filter((item) => item.status === false).length
@@ -54,7 +54,7 @@ function checkCount() {
 
 function removeItem(id) {
   todoListData.value = todoListData.value.filter((item) => item.id !== id)
-  checkCount()
+  updateCount()
 }
 
 function changeType(type) {
@@ -70,7 +70,7 @@ function changeType(type) {
       currentType.value = '已完成'
       break
   }
-  checkCount()
+  updateCount()
 }
 
 function addTodo() {
@@ -79,7 +79,7 @@ function addTodo() {
   // 使用 push() 方法將新項目加入陣列尾部
   todoListData.value.push(newTodoItem)
   newTodo.value = ''
-  checkCount()
+  updateCount()
 }
 
 function _uuid() {
