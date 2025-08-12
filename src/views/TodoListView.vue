@@ -14,38 +14,7 @@ const newTodo = ref('')
 const showTodoListData = ref([])
 const isLogin = ref(false)
 
-const todoListData = ref([
-  {
-    id: _uuid(),
-    name: '把冰箱發霉的檸檬拿去丟',
-    status: true,
-  },
-  {
-    id: _uuid(),
-    name: '打電話叫媽媽匯款給我',
-    status: true,
-  },
-  {
-    id: _uuid(),
-    name: '整理電腦資料夾',
-    status: true,
-  },
-  {
-    id: _uuid(),
-    name: '繳電費水費瓦斯費',
-    status: true,
-  },
-  {
-    id: _uuid(),
-    name: '約vicky禮拜三泡溫泉',
-    status: true,
-  },
-  {
-    id: _uuid(),
-    name: '約ada禮拜四吃晚餐',
-    status: true,
-  },
-])
+const todoListData = ref([])
 
 const site = 'https://todolist-api.hexschool.io'
 
@@ -55,6 +24,7 @@ const todoListUnFinishCount = ref(0)
 
 onMounted(() => {
   checkLogin()
+  getTodos()
   showTodoListData.value = todoListData.value
   updateCount()
 })
@@ -67,6 +37,7 @@ function updateCount() {
 
 function removeItem(id) {
   todoListData.value = todoListData.value.filter((item) => item.id !== id)
+  showTodoListData.value=todoListData.value
   updateCount()
 }
 
@@ -99,9 +70,10 @@ function changeType(type) {
 
 function addTodo() {
   // 假設你新增一個項目
-  const newTodoItem = { id: _uuid(), name: newTodo.value, status: false }
+  const newTodoItem = { id: _uuid(), content: newTodo.value, status: false }
   // 使用 push() 方法將新項目加入陣列尾部
   todoListData.value.push(newTodoItem)
+  showTodoListData.value=todoListData.value
   newTodo.value = ''
   updateCount()
 }
@@ -160,6 +132,22 @@ function checkLogin(){
           Cookies.remove('tokenExpired')
         })
   }
+}
+
+function getTodos(){
+  const requestUrl = `${site}/todos`
+  const token = Cookies.get('token')
+
+  axios
+        .get(requestUrl, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          todoListData.value=response.data.data
+          showTodoListData.value=todoListData.value
+        })
 }
 
 function signOutButton(){
@@ -246,7 +234,7 @@ function signOutButton(){
                     :checked="todoList.status"
                     @click="checkItem(todoList.id)"
                   />
-                  <span>{{ todoList.name }}</span>
+                  <span>{{ todoList.content }}</span>
                 </label>
                 <a href="#" @click="removeItem(todoList.id)">
                   <i class="fa fa-times"></i>
