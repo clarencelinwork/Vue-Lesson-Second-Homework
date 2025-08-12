@@ -1,11 +1,18 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { useRouter,RouterLink } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+
+const router = useRouter()
+
+const nickname =ref('')
 
 const currentType = ref('全部')
 const newTodo = ref('')
 
 const showTodoListData = ref([])
+const isLogin = ref(false)
 
 const todoListData = ref([
   {
@@ -40,11 +47,14 @@ const todoListData = ref([
   },
 ])
 
+const site = 'https://todolist-api.hexschool.io'
+
 const todoListCount = ref(0)
 const todoListFinishCount = ref(0)
 const todoListUnFinishCount = ref(0)
 
 onMounted(() => {
+  checkLogin()
   showTodoListData.value = todoListData.value
   updateCount()
 })
@@ -113,6 +123,73 @@ function _uuid() {
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
   })
 }
+
+function checkLogin(){
+  const token = Cookies.get('token')
+  if (token !== undefined){
+      const requestUrl = `${site}/users/checkout`
+
+      axios
+        .get(requestUrl, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          isLogin.value = true
+          if(response.data.status===false){
+            Cookies.remove('UID')
+            Cookies.remove('token')
+            Cookies.remove('tokenExpired')
+            router.push({ name: 'sign-in' });
+          }else{
+            nickname.value=response.data.nickname
+          }
+        })
+        .catch((error) => {
+          isLogin.value = false
+          if (Array.isArray(error.response.data.message)) {
+            // 如果是陣列，取得第一個元素
+            errorMessage.value = error.response.data.message[0]
+          } else {
+            // 如果不是陣列（例如是字串），就直接使用
+            errorMessage.value = error.response.data.message
+          }
+          Cookies.remove('UID')
+          Cookies.remove('token')
+          Cookies.remove('tokenExpired')
+        })
+  }
+}
+
+function signOutButton(){
+  const token = Cookies.get('token')
+  const requestUrl = `${site}/users/sign_out`
+  axios
+    .post(requestUrl, 
+    {},
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+      )
+    .then((response) => {
+      Cookies.remove('token')
+      Cookies.remove('tokenExpired')
+      isLogin.value = false
+      router.push({ name: 'sign-in' });
+    })
+    .catch((error) => {
+      if (Array.isArray(error.response.data.message)) {
+        // 如果是陣列，取得第一個元素
+        errorMessage.value = error.response.data.message[0]
+      } else {
+        // 如果不是陣列（例如是字串），就直接使用
+        errorMessage.value = error.response.data.message
+      }
+    })
+}
 </script>
 
 <template>
@@ -121,9 +198,9 @@ function _uuid() {
       <h1><a href="#">ONLINE TODO LIST</a></h1>
       <ul>
         <li class="todo_sm">
-          <a href="#"><span>王小明的代辦</span></a>
+          <a href="#"><span>{{ nickname }}的代辦</span></a>
         </li>
-        <li><a href="#loginPage">登出</a></li>
+        <li><a href="#" @click="signOutButton">登出</a></li>
       </ul>
     </nav>
     <div class="conatiner todoListPage vhContainer">
