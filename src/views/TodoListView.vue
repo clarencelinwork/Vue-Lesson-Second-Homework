@@ -69,13 +69,32 @@ function changeType(type) {
 }
 
 function addTodo() {
-  // 假設你新增一個項目
-  const newTodoItem = { id: _uuid(), content: newTodo.value, status: false }
-  // 使用 push() 方法將新項目加入陣列尾部
-  todoListData.value.push(newTodoItem)
-  showTodoListData.value=todoListData.value
-  newTodo.value = ''
-  updateCount()
+  const token = Cookies.get('token')
+  const requestUrl = `${site}/todos`
+  axios
+    .post(requestUrl, 
+    {
+      content: newTodo.value,
+    },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+      )
+    .then((response) => {
+      if (response.data.status === true){
+        const newTodoItem = response.data.newTodo
+        // 使用 push() 方法將新項目加入陣列尾部
+        todoListData.value.push(newTodoItem)
+        showTodoListData.value=todoListData.value
+        newTodo.value = ''
+        updateCount()
+      }
+    })
+    .catch((error) => {
+      
+    })
 }
 
 function checkItem(id) {
