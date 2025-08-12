@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { useRouter,RouterLink } from 'vue-router'
 import SideComponent from '@/components/Side.vue'
 import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
@@ -7,6 +7,8 @@ import PasswordInput from '@/components/PasswordInput.vue'
 import { ref,onMounted  } from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
@@ -26,7 +28,7 @@ function submitForm() {
     .then((response) => {
       Cookies.set('token', response.data.token, { expires: 7 })
       Cookies.set('tokenExpired', response.data.exp, { expires: 7 })
-      errorMessage.value = "登入成功"
+      router.push({ name: 'todo-list' });
     })
     .catch((error) => {
       if (Array.isArray(error.response.data.message)) {
@@ -69,6 +71,10 @@ function signOutButton(){
 }
 
 onMounted(() => {
+  checkLogin()
+});
+
+function checkLogin(){
   const token = Cookies.get('token')
   if (token !== undefined){
       const requestUrl = `${site}/users/checkout`
@@ -92,9 +98,12 @@ onMounted(() => {
             // 如果不是陣列（例如是字串），就直接使用
             errorMessage.value = error.response.data.message
           }
+          Cookies.remove('UID')
+          Cookies.remove('token')
+          Cookies.remove('tokenExpired')
         })
   }
-});
+}
 
 function getEmailInput(value) {
   email.value = value
