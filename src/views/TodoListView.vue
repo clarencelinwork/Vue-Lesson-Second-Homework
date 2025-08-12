@@ -35,12 +35,6 @@ function updateCount() {
   todoListUnFinishCount.value = todoListData.value.filter((item) => item.status === false).length
 }
 
-function removeItem(id) {
-  todoListData.value = todoListData.value.filter((item) => item.id !== id)
-  showTodoListData.value=todoListData.value
-  updateCount()
-}
-
 const finishedTodoList = computed(() => {
   return todoListData.value.filter((item) => item.status === true)
 })
@@ -93,7 +87,30 @@ function addTodo() {
       }
     })
     .catch((error) => {
-      
+      console.log(error)
+    })
+}
+
+function removeItem(id) {
+  const token = Cookies.get('token')
+  const requestUrl = `${site}/todos/${id}`
+  axios
+    .delete(requestUrl, 
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+      )
+    .then((response) => {
+      if (response.data.status === true){
+        todoListData.value = todoListData.value.filter((item) => item.id !== id)
+        showTodoListData.value=todoListData.value
+        updateCount()
+      }
+    })
+    .catch((error) => {
+      console.log(error)
     })
 }
 
