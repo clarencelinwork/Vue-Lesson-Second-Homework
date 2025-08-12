@@ -82,6 +82,12 @@ function addTodo() {
   updateCount()
 }
 
+function checkItem(id) {
+  let item = todoListData.value.find((item) => item.id === id)
+  item.status = !item.status
+  updateCount()
+}
+
 function _uuid() {
   let d = Date.now()
   if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -147,6 +153,7 @@ function _uuid() {
                     type="checkbox"
                     value="todoList.value"
                     :checked="todoList.status"
+                    @click="checkItem(todoList.id)"
                   />
                   <span>{{ todoList.name }}</span>
                 </label>
