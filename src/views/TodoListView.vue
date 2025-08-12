@@ -1,9 +1,11 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const currentType = ref('全部')
 const newTodo = ref('')
+
+const showTodoListData = ref([])
 
 const todoListData = ref([
   {
@@ -43,6 +45,7 @@ const todoListFinishCount = ref(0)
 const todoListUnFinishCount = ref(0)
 
 onMounted(() => {
+  showTodoListData.value = todoListData.value
   updateCount()
 })
 
@@ -57,17 +60,28 @@ function removeItem(id) {
   updateCount()
 }
 
+const finishedTodoList = computed(() => {
+  return todoListData.value.filter((item) => item.status === true)
+})
+
+const unFinishedTodoList = computed(() => {
+  return todoListData.value.filter((item) => item.status === false)
+})
+
 function changeType(type) {
   switch (type) {
     default:
     case '全部':
       currentType.value = '全部'
+      showTodoListData.value = todoListData.value
       break
     case '待完成':
       currentType.value = '待完成'
+      showTodoListData.value = unFinishedTodoList.value
       break
     case '已完成':
       currentType.value = '已完成'
+      showTodoListData.value = finishedTodoList.value
       break
   }
   updateCount()
@@ -145,7 +159,7 @@ function _uuid() {
             </li>
           </ul>
           <div class="todoList_items">
-            <ul class="todoList_item" v-for="todoList in todoListData" :key="todoList.id">
+            <ul class="todoList_item" v-for="todoList in showTodoListData" :key="todoList.id">
               <li>
                 <label class="todoList_label">
                   <input
