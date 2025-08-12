@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ref, onMounted } from 'vue'
 
 const currentType = ref('全部')
+const newTodo = ref('')
 
 const todoListData = ref([
   {
@@ -72,6 +73,15 @@ function changeType(type) {
   checkCount()
 }
 
+function addTodo() {
+  // 假設你新增一個項目
+  const newTodoItem = { id: _uuid(), name: newTodo.value, status: false }
+  // 使用 push() 方法將新項目加入陣列尾部
+  todoListData.value.push(newTodoItem)
+  newTodo.value = ''
+  checkCount()
+}
+
 function _uuid() {
   let d = Date.now()
   if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -99,8 +109,8 @@ function _uuid() {
     <div class="conatiner todoListPage vhContainer">
       <div class="todoList_Content">
         <div class="inputBox">
-          <input type="text" placeholder="請輸入待辦事項" />
-          <a href="#">
+          <input type="text" placeholder="請輸入待辦事項" v-model="newTodo" />
+          <a href="#" @click="addTodo()">
             <i class="fa fa-plus"></i>
           </a>
         </div>
