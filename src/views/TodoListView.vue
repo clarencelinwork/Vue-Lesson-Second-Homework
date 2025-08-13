@@ -115,9 +115,27 @@ function removeItem(id) {
 }
 
 function checkItem(id) {
-  let item = todoListData.value.find((item) => item.id === id)
-  item.status = !item.status
-  updateCount()
+  const token = Cookies.get('token')
+  const requestUrl = `${site}/todos/${id}/toggle`
+  axios
+    .patch(requestUrl, 
+    {}  
+    ,{
+        headers: {
+          Authorization: token,
+        },
+      }
+      )
+    .then((response) => {
+      if (response.data.status === true){
+        let todoListItem = todoListData.value.find(item => item.id === id);
+        todoListItem.status = !todoListItem.status
+        updateCount()
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 
 function _uuid() {
