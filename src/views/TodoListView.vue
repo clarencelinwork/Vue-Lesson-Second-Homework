@@ -25,8 +25,6 @@ const todoListUnFinishCount = ref(0)
 onMounted(() => {
   checkLogin()
   getTodos()
-  showTodoListData.value = todoListData.value
-  updateCount()
 })
 
 function updateCount() {
@@ -201,6 +199,7 @@ function getTodos(){
         .then((response) => {
           todoListData.value=response.data.data
           showTodoListData.value=todoListData.value
+          updateCount()
         })
 }
 
