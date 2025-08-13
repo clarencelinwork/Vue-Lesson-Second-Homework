@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { useRouter ,RouterLink } from 'vue-router'
 import SideComponent from '@/components/Side.vue'
 import EmailInput from '@/components/EmailInput.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
@@ -7,6 +7,8 @@ import NicknameInput from '@/components/NicknameInput.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+
+const router = useRouter()
 
 const email = ref('')
 const nickname = ref('')
@@ -30,8 +32,11 @@ function submitForm() {
       errorMessage.value = "註冊成功"
       email.value = ""
       nickname.value = ""
-      emapasswordil.value = ""
+      password.value = ""
       repeatPassword.value = ""
+      setTimeout(() => {
+        router.push({ name: 'sign-in' });
+      }, 1500);
     })
     .catch((error) => {
       console.log(error)
