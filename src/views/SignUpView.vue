@@ -106,7 +106,5 @@ function getRepeatPasswordInput(value) {
 </template>
 
 <style scoped>
-#errorMessage {
-  color: red;
-}
+
 </style>

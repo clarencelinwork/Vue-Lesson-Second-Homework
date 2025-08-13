@@ -528,3 +528,7 @@ nav ul a span {
   text-decoration: none;
 }
 /*# sourceMappingURL=all.css.map */
+
+#errorMessage {
+  color: red;
+}

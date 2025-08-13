@@ -136,7 +136,5 @@ function getPasswordInput(value) {
 </template>
 
 <style scoped>
-#errorMessage {
-  color: red;
-}
+
 </style>
