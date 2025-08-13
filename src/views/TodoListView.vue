@@ -63,7 +63,10 @@ function changeType(type) {
 function addTodo() {
   const token = Cookies.get('token')
   const requestUrl = `${site}/todos`
-  axios
+
+  const tempNewTodo=newTodo.value.trim()
+  if(tempNewTodo.length!==0){
+    axios
     .post(requestUrl, 
     {
       content: newTodo.value,
@@ -87,6 +90,9 @@ function addTodo() {
     .catch((error) => {
       console.log(error)
     })
+  }else{
+    alert("請輸入待辦事項")
+  }
 }
 
 function removeItem(id) {
